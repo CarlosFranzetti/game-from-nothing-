@@ -4,7 +4,9 @@ An original arcade-style maze-chase game built specifically for iPhone — a lov
 homage to the golden age of arcade games, with original maze layouts, hand-rasterized
 pixel sprites, and fully synthesized retro sound.
 
-**Play it:** deploy target `msppmacmana.vercel.app`
+**Play it now:** https://notmspacman.vercel.app
+(rename the Vercel project to `msppmacmana` in its dashboard settings to move it
+to `msppmacmana.vercel.app` — same deployment, different name)
 
 ## iPhone experience
 
@@ -45,6 +47,16 @@ python3 -m http.server 8000   # then open http://localhost:8000
 ```
 
 Files: `index.html` (shell), `game.js` (engine), `sw.js` (offline cache),
-`manifest.webmanifest` + `icons/` (home-screen app).
+`manifest.webmanifest` + `icons/` (home-screen app), `vercel.json` (static deploy).
+
+## Documentation
+
+| File | What's inside |
+|---|---|
+| [docs/GAMEPLAY.md](docs/GAMEPLAY.md) | scoring, ghost personalities, fruit, level tables |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | maze format, movement, AI, audio, rendering |
+| [ROADMAP.md](ROADMAP.md) | possible future features |
+| [CHANGELOG.md](CHANGELOG.md) | version history |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | local dev, ground rules, test checklist |
 
 *All artwork, layouts, and audio are original creations.*
