@@ -37,12 +37,12 @@ const MAZE_HALVES = {
       "..............","#.####.####.##","#o####.####.##","#.............","#.####.####.##",
       "#.####.####.##","#......###....","#.##.#####.###","#.##.#####.###","#.............",
       "##############"],
-  D: ["##############","#.....##.....#","#.###.##.###.#","#o###.##.###.#","#.....##.....#",
-      "#.###.##.###.#","#.###.##.###.#","#.###.##.###.#","..............","#.###.##.###.#",
-      "#.###.##.###.#","#.....##......","#.###.##.####-","#.###.##.##   ","         ##   ",
-      "#.###.##.#####","#.....##......","#.###.##.###.#","#.###.##.###.#","#.###.##.###.#",
-      "..............","#.###.##.###.#","#o###.##.###.#","#.............","#.###.##.###.#",
-      "#.###.##.###.#","#.....##.....#","#.###.##.###.#","#.###.##.###.#","#.............",
+  D: ["##############","#............#","#.####.#####.#","#o####.#####.#","#.............",
+      "#.##.#####.###","#.##.#####.###","#.##.#####.###","..............","#.##.#####.###",
+      "#.##.#####.###","#....####.....","#.##.####.###-","#.##.####.#   ","          #   ",
+      "#.##.####.####","#....####.....","#.##.#####.###","#.##.#####.###","#.##.#####.###",
+      "..............","#.####.####.##","#o####.####.##","#.............","#.####.####.##",
+      "#.####.####.##","#......###....","#.##.#####.###","#.##.#####.###","#.............",
       "##############"],
 };
 const MAZE_COLORS = {
@@ -75,12 +75,23 @@ const FRUITS = [
 function fruitForLevel(lv) {
   return lv <= 7 ? FRUITS[lv - 1] : FRUITS[Math.floor(rand() * 7)];
 }
+// Frightened seconds per level, following the arcade progression: it eases off
+// but keeps handing back "relief" levels instead of dropping to nothing early.
+// Deep levels floor at 1s so power pellets never become dead weight.
+const FRIGHT_SEC = [6,5,4,3,2,5,2,2,1,5,2,1,1,3,1,1,1,1,2,1];
 // per-level tuning (percent of BASE_SPEED, fright seconds)
 function levelSpec(lv) {
-  if (lv === 1) return { pac:.80, ghost:.75, pacFr:.90, ghostFr:.50, tunnel:.40, fright:6 };
-  if (lv <= 4)  return { pac:.90, ghost:.85, pacFr:.95, ghostFr:.55, tunnel:.45, fright:5 - (lv - 2) };
-  if (lv <= 8)  return { pac:1.0, ghost:.95, pacFr:1.0, ghostFr:.60, tunnel:.50, fright:Math.max(0, 7 - lv) };
-  return { pac:1.0, ghost:.95, pacFr:1.0, ghostFr:.60, tunnel:.50, fright:lv % 2 === 0 ? 1 : 0 };
+  const fright = FRIGHT_SEC[Math.min(lv, FRIGHT_SEC.length) - 1];
+  if (lv === 1) return { pac:.80, ghost:.75, pacFr:.90, ghostFr:.50, tunnel:.40, houseForce:4, fright };
+  if (lv <= 4)  return { pac:.90, ghost:.85, pacFr:.95, ghostFr:.55, tunnel:.45, houseForce:4, fright };
+  return { pac:1.0, ghost:.95, pacFr:1.0, ghostFr:.60, tunnel:.50, houseForce:3, fright };
+}
+// Ghosts leave the house once this many pellets are gone, so the first levels
+// open with only part of the pack out (arcade behaviour).
+function houseCounts(lv) {
+  if (lv === 1) return { pinky: 0, inky: 30, sue: 60 };
+  if (lv === 2) return { pinky: 0, inky: 0, sue: 50 };
+  return { pinky: 0, inky: 0, sue: 0 };
 }
 function waveSchedule(lv) {
   return lv < 5 ? [7, 20, 7, 20, 5, 20, 5, Infinity] : [5, 20, 5, 20, 5, 20, 3, Infinity];
@@ -389,16 +400,17 @@ function startLevel(resetOnly) {
   }
   game.wave = 0; game.waveT = 0; game.mode = 'scatter';
   game.frightT = 0; game.ghostChain = 0; game.fruit = null;
-  game.popups = []; game.freezeT = 0;
+  game.popups = []; game.freezeT = 0; game.noPelletT = 0;
   player.x = DOOR_X; player.y = START_Y;
   player.dir = 'left'; player.want = 'left'; player.moving = false; player.animT = 0;
   ghosts.length = 0;
-  const mk = (name, x, y, house, release, dir) =>
-    ghosts.push({ name, x, y, dir, house, releaseT: release, dead: false, frightened: false, animT: rand() });
+  const counts = houseCounts(game.level);
+  const mk = (name, x, y, house, releaseAt, dir) =>
+    ghosts.push({ name, x, y, dir, house, releaseAt, dead: false, frightened: false, animT: rand() });
   mk('blinky', DOOR_X, DOOR_Y, 'out', 0, 'left');
-  mk('pinky', DOOR_X, HOUSE_Y, 'in', 1.5, 'up');
-  mk('inky', DOOR_X - 16, HOUSE_Y, 'in', 4, 'down');
-  mk('sue', DOOR_X + 16, HOUSE_Y, 'in', 6.5, 'up');
+  mk('pinky', DOOR_X, HOUSE_Y, 'in', counts.pinky, 'up');
+  mk('inky', DOOR_X - 16, HOUSE_Y, 'in', counts.inky, 'down');
+  mk('sue', DOOR_X + 16, HOUSE_Y, 'in', counts.sue, 'up');
 }
 
 function newGame() {
@@ -520,7 +532,7 @@ function eatAt() {
   const ch = game.grid[r] && game.grid[r][c];
   if ((ch === '.' || ch === 'o') && !game.eaten.has(key)) {
     game.eaten.add(key);
-    game.pelletsLeft--; game.pelletsEaten++;
+    game.pelletsLeft--; game.pelletsEaten++; game.noPelletT = 0;
     if (ch === '.') { addScore(10); game.wakaAlt = !game.wakaAlt; SFX.waka(game.wakaAlt); }
     else {
       addScore(50); SFX.power();
@@ -571,13 +583,16 @@ function ghostTarget(gh) {
 function updateGhost(gh, dt) {
   let dist = ghostSpeed(gh) * dt;
   if (gh.house === 'in') {
-    gh.releaseT -= dt;
+    // leave once enough pellets are gone, or if the player has stalled long
+    // enough that nothing is happening (only the next ghost in line is freed)
+    const stalled = game.noPelletT > levelSpec(game.level).houseForce
+      && ghosts.find(g => g.house === 'in') === gh;
+    if (game.pelletsEaten >= gh.releaseAt || stalled) { gh.house = 'leave'; game.noPelletT = 0; }
     // bounce vertically
     const d = DIRS[gh.dir];
     gh.y += d.y * dist;
     if (gh.y < HOUSE_Y - 5) { gh.y = HOUSE_Y - 5; gh.dir = 'down'; }
     if (gh.y > HOUSE_Y + 5) { gh.y = HOUSE_Y + 5; gh.dir = 'up'; }
-    if (gh.releaseT <= 0) gh.house = 'leave';
     return;
   }
   if (gh.house === 'leave') {
@@ -710,6 +725,7 @@ function update(dt) {
     case 'play': {
       if (game.paused) break;
       if (game.freezeT > 0) { game.freezeT -= dt; break; }
+      game.noPelletT += dt;
       // mode waves
       if (game.frightT > 0) {
         game.frightT -= dt;
