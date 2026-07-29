@@ -1,5 +1,24 @@
 # Changelog
 
+## v1.3 — level progression tuned to the arcade original
+
+The curve was punishing in a way the arcade games never were: frightened time
+hit **zero at level 7**, so power pellets became worthless barely a third of
+the way in, and the whole pack chased you from the opening second of level 1.
+
+- **Frightened time now follows the arcade table** (6/5/4/3/2, then relief
+  levels at 6, 10, 14 and 19) and floors at one second instead of vanishing,
+  so a four-ghost combo is always possible.
+- **Speeds settle after level 5** at the arcade values rather than continuing
+  to climb; ghosts stay at 95% of the player, so you are never simply outrun.
+- **Classic staged ghost-house release.** Ghosts leave on pellet counters, not
+  timers: level 1 opens with two ghosts out, the cyan one waiting for 30
+  pellets and the orange one for 60. A stall guard frees the next ghost if the
+  player stops eating, so the board can't deadlock.
+- **Maze D rebuilt.** It had come out as a uniform lattice that read as
+  machine-generated; it now has the varied block shapes of a designed arcade
+  board while keeping its three tunnel pairs.
+
 ## v1.2 — maze redesign for playability
 
 All four mazes rebuilt from scratch. The old layouts wasted the entire middle

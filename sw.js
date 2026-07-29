@@ -1,4 +1,4 @@
-const CACHE = 'mspacmana-v3';
+const CACHE = 'mspacmana-v4';
 const ASSETS = ['.', 'index.html', 'game.js', 'manifest.webmanifest',
   'icons/icon-180.png', 'icons/icon-192.png', 'icons/icon-512.png'];
 

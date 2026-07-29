@@ -83,7 +83,16 @@ minimizing straight-line distance to its **target tile**:
   reverse allowed.
 
 Mode waves, frightened timers, tunnel slow-down, and the red ghost's
-low-pellet speed boost are all per-level tuned in `levelSpec`.
+low-pellet speed boost are all per-level tuned in `levelSpec`, which follows
+the arcade progression: speeds step up over the first five levels and stop
+there, while frightened time (`FRIGHT_SEC`) tightens but keeps returning
+relief levels and never reaches zero.
+
+House release follows the arcade's pellet counters rather than plain timers
+(`houseCounts`): a ghost leaves once that many pellets are gone, so early
+levels open with only part of the pack out. A stall guard tracks time since
+the last pellet (`game.noPelletT`) and frees the next ghost in line if the
+player stops eating, so the board can never deadlock.
 
 ## Audio
 

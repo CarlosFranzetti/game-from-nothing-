@@ -85,8 +85,31 @@ pellets there are safe to farm if you keep a loop open behind you.
 
 | Levels | Maze | Notes |
 |---|---|---|
-| 1–2 | A (pink) | 80% player speed, 6s frightened, one tunnel |
-| 3–5 | B (blue) | speeds rise, frightened shrinks, two tunnels |
+| 1–2 | A (pink) | 80% player speed, one tunnel — the gentle opening |
+| 3–5 | B (blue) | speeds rise, two tunnels |
 | 6–9 | C (amber) | full speed, two tunnels |
-| 10–13 | D (indigo) | dense grid, three tunnels, frightened nearly gone |
-| 14+ | C/D alternating | 1s or zero frightened — pure evasion |
+| 10–13 | D (indigo) | three tunnels, the most escape routes |
+| 14+ | C/D alternating | full speed, short frightened windows |
+
+Ghosts top out at 95% of your speed, so you are always marginally faster than
+them in open corridors — the difficulty comes from being surrounded, not outrun.
+
+## Difficulty curve
+
+Frightened time follows the arcade progression: it tightens as you climb but
+keeps handing back **relief levels** rather than collapsing to nothing.
+
+| Level | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15+ |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Frightened | 6s | 5s | 4s | 3s | 2s | **5s** | 2s | 2s | 1s | **5s** | 2s | 1s | 1s | **3s** | 1–2s |
+
+Power pellets never stop working — even the deepest levels keep a one-second
+window, so a chained four-ghost combo is always on the table.
+
+## Starting a level
+
+Only part of the pack comes out at once early on. On level 1 the red ghost
+starts outside and the pink one follows immediately, but the cyan ghost waits
+until 30 pellets are gone and the orange one until 60 — so your first sweep is
+against two ghosts, not four. By level 3 everyone leaves at once. If you stop
+eating entirely, the next ghost in line is released anyway so play can't stall.
