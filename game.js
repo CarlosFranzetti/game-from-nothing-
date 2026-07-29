@@ -157,7 +157,7 @@ function rasterPac(dir, mouthDeg) {
   const half = mouthDeg * Math.PI / 360;
   for (let y = 0; y < 15; y++) for (let x = 0; x < 15; x++) {
     const dx = x - 7, dy = y - 7;
-    if (dx*dx + dy*dy > 49) continue;
+    if (dx*dx + dy*dy > 42) continue; // 13px ball fits the 12px visual corridor
     if (half > 0) {
       let a = Math.atan2(dy, dx) - ang;
       while (a > Math.PI) a -= 2*Math.PI; while (a < -Math.PI) a += 2*Math.PI;
@@ -182,28 +182,27 @@ function rasterGhost(bodyCol, faceMode, dir, frame) {
   const c = mkCanvas(16, 16), g = c.getContext('2d');
   if (faceMode !== 'eyes') {
     const col = faceMode === 'fright' ? '#2121de' : faceMode === 'flash' ? '#dedeff' : bodyCol;
-    for (let y = 0; y < 14; y++) for (let x = 0; x < 14; x++) {
+    // 12x13 body so it stays inside the 12px visual corridor
+    for (let y = 0; y < 13; y++) for (let x = 0; x < 12; x++) {
       let on = false;
-      if (y <= 6) { const dx = x - 6.5, dy = y - 6.5; on = dx*dx + dy*dy <= 45; }
+      if (y <= 5) { const dx = x - 5.5, dy = y - 5.5; on = dx*dx + dy*dy <= 31; }
       else if (y <= 11) on = true;
-      else if (y === 12) on = true;
       else { // scalloped skirt, 2 walk frames
-        on = frame === 0 ? (x <= 2 || (x >= 5 && x <= 8) || x >= 11)
-                         : ((x >= 1 && x <= 3) || x === 6 || x === 7 || (x >= 10 && x <= 12));
+        on = frame === 0 ? (x <= 1 || (x >= 4 && x <= 7) || x >= 10)
+                         : ((x >= 1 && x <= 2) || x === 5 || x === 6 || (x >= 9 && x <= 10));
       }
-      if (on) P(g, x + 1, y + 1, col);
+      if (on) P(g, x + 2, y + 1, col);
     }
   }
   if (faceMode === 'fright' || faceMode === 'flash') {
     const fc = faceMode === 'flash' ? '#ff2222' : '#f0c8a0';
-    P(g,5,6,fc); P(g,6,6,fc); P(g,10,6,fc); P(g,11,6,fc);           // eyes
-    for (let i = 0; i < 4; i++) { P(g, 3+i*3, 10, fc); P(g, 4+i*3, 9, fc); P(g, 5+i*3, 10, fc); } // wavy mouth
+    P(g,5,5,fc); P(g,6,5,fc); P(g,9,5,fc); P(g,10,5,fc);            // eyes
+    for (let i = 0; i < 3; i++) { P(g, 4+i*3, 10, fc); P(g, 5+i*3, 9, fc); P(g, 6+i*3, 10, fc); } // wavy mouth
   } else {
     const d = DIRS[dir] || {x:0,y:0};
-    const ex = [4 + d.x, 10 + d.x], ey = 4 + d.y;
+    const ex = [4 + d.x, 9 + d.x], ey = 3 + d.y;
     for (const x0 of ex) { // white of the eyes 3x4
       g.fillStyle = '#fff'; g.fillRect(x0, ey, 3, 4);
-      P(g, x0, ey, faceMode==='eyes' ? '#fff' : '#fff');
       g.fillStyle = '#2121de'; g.fillRect(x0 + 1 + d.x, ey + 1 + d.y, 2, 2); // pupil
     }
   }
@@ -258,24 +257,26 @@ function renderMaze(grid, colors, whiteFlash) {
   const open = (r, c) => !(r >= 0 && r < ROWS && c >= 0 && c < COLS) || ' .o-'.includes(grid[r][c]);
   const fill = whiteFlash ? '#000' : colors.fill;
   const edge = whiteFlash ? '#dedeff' : colors.edge;
+  const IN = 2; // walls pull back from corridors so sprites have breathing room
   for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
     if (grid[r][c] === '-') { g.fillStyle = '#ffb8de'; g.fillRect(c*T, r*T + 3, T, 2); continue; }
     if (grid[r][c] !== '#') continue;
     const x = c*T, y = r*T;
-    g.fillStyle = fill; g.fillRect(x, y, T, T);
-    g.fillStyle = edge;
     const oU = open(r-1,c) && r > 0, oD = open(r+1,c) && r < ROWS-1, oL = open(r,c-1) && c > 0, oR = open(r,c+1) && c < COLS-1;
-    const bU = r === 0, bD = r === ROWS-1, bL = c === 0, bR = c === COLS-1;
-    if (oU || (bU && open(r+1,c))) g.fillRect(x, y, T, 1);
-    if (oD || (bD && open(r-1,c))) g.fillRect(x, y+T-1, T, 1);
-    if (oL || (bL && open(r,c+1))) g.fillRect(x, y, 1, T);
-    if (oR || (bR && open(r,c-1))) g.fillRect(x, y+T-1, 1, T);
+    const x0 = x + (oL ? IN : 0), y0 = y + (oU ? IN : 0);
+    const w = T - (oL ? IN : 0) - (oR ? IN : 0), h = T - (oU ? IN : 0) - (oD ? IN : 0);
+    g.fillStyle = fill; g.fillRect(x0, y0, w, h);
+    g.fillStyle = edge;
+    if (oU) g.fillRect(x0, y0, w, 1);
+    if (oD) g.fillRect(x0, y0 + h - 1, w, 1);
+    if (oL) g.fillRect(x0, y0, 1, h);
+    if (oR) g.fillRect(x0 + w - 1, y0, 1, h);
     // rounded outer corners
     g.fillStyle = '#000';
-    if (oU && oL) { g.fillRect(x, y, 1, 1); }
-    if (oU && oR) { g.fillRect(x+T-1, y, 1, 1); }
-    if (oD && oL) { g.fillRect(x, y+T-1, 1, 1); }
-    if (oD && oR) { g.fillRect(x+T-1, y+T-1, 1, 1); }
+    if (oU && oL) g.fillRect(x0, y0, 1, 1);
+    if (oU && oR) g.fillRect(x0 + w - 1, y0, 1, 1);
+    if (oD && oL) g.fillRect(x0, y0 + h - 1, 1, 1);
+    if (oD && oR) g.fillRect(x0 + w - 1, y0 + h - 1, 1, 1);
   }
 }
 
