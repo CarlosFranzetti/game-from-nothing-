@@ -39,6 +39,21 @@ A validation script (kept in the development scratchpad) BFS-checks every
 maze: symmetry, all pellets reachable, no dead ends, no 2x2 open blobs, and
 an intact ghost house. All four shipped mazes pass.
 
+Design rules the layouts follow, so new mazes stay playable:
+
+- The band around the ghost house carries **three vertical shafts per side**,
+  joined above, through (the tunnel row), and below the house — the middle is
+  loops, never a funnel, and it is full of pellets.
+- Corridor segments must terminate **on** a shaft, or the end tile becomes a
+  dead end (the validator catches this).
+- A full-width corridor row must be followed above and below by shaft rows,
+  or it forms 2x2 open blocks.
+- **Tunnel rows are derived from the maze**, not hard-coded: any row whose
+  column 0 is open is a tunnel, which is what drives ghost slow-down. Row 14
+  is always a tunnel because bonus fruit enters through it.
+- Fruit thresholds and siren stages are computed as fractions of each maze's
+  pellet total, so boards of different sizes pace identically.
+
 ## Movement
 
 Everything moves on the tile grid in pixel space:

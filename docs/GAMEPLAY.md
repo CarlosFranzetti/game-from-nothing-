@@ -64,15 +64,29 @@ banana 5000 (random pick past level 7).
 
 ## Tunnels
 
-The side tunnels wrap around the screen. Ghosts slow down inside them —
-your best escape route in a jam.
+Tunnels wrap around the screen and ghosts slow down inside them, making them
+your best escape route in a jam. Later mazes give you more of them:
+
+| Maze | Tunnel pairs |
+|---|---|
+| A | 1 (beside the ghost house) |
+| B | 2 (upper field + house row) |
+| C | 2 (house row + a full-width lower tunnel) |
+| D | 3 (upper, house row, and lower) |
+
+## Reading the middle
+
+The band around the ghost house is not a corridor to rush through — it's three
+vertical shafts per side joined above, through, and below the house. That means
+a ghost committing to one shaft can always be escaped through another, and the
+pellets there are safe to farm if you keep a loop open behind you.
 
 ## Level progression
 
 | Levels | Maze | Notes |
 |---|---|---|
-| 1–2 | A (pink) | 80% player speed, 6s frightened |
-| 3–5 | B (blue) | speeds rise, frightened shrinks |
-| 6–9 | C (amber) | full speed |
-| 10–13 | D (indigo) | frightened nearly gone |
+| 1–2 | A (pink) | 80% player speed, 6s frightened, one tunnel |
+| 3–5 | B (blue) | speeds rise, frightened shrinks, two tunnels |
+| 6–9 | C (amber) | full speed, two tunnels |
+| 10–13 | D (indigo) | dense grid, three tunnels, frightened nearly gone |
 | 14+ | C/D alternating | 1s or zero frightened — pure evasion |
