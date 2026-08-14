@@ -1,62 +1,61 @@
-# MS PACMANA
+# MS PACMANA Browser Prototype
 
-An original arcade-style maze-chase game built specifically for iPhone — a loving
-homage to the golden age of arcade games, with original maze layouts, hand-rasterized
-pixel sprites, and fully synthesized retro sound.
+This repository contains the original dependency-free browser prototype of MS PACMANA.
+It uses vanilla JavaScript, Canvas, Web Audio, and a progressive web app shell.
 
-**Play it now:** https://notmspacman.vercel.app
-(rename the Vercel project to `msppmacmana` in its dashboard settings to move it
-to `msppmacmana.vercel.app` — same deployment, different name)
+> Project relationship: this prototype is preserved as a small, readable web
+> implementation. Active React Native and Expo development lives in
+> [Notmspacman](https://github.com/CarlosFranzetti/Notmspacman).
 
-## iPhone experience
+See [PROJECT_STATUS.md](PROJECT_STATUS.md) for the difference between the two repositories.
 
-- **No browser chrome**: open it in Safari, tap **Share → Add to Home Screen**, and
-  launch it from the icon — it runs fullscreen as a standalone app (PWA, works offline).
-- **Swipe anywhere to steer** — you don't have to touch the character; you can even
-  hold your thumb down and slide to chain turns.
-- Retro sounds are synthesized live with WebAudio (sirens, waka, power-ups, and a
-  ready jingle) — audio unlocks on your first tap.
+## Prototype features
 
-## Game features
-
-- 4 original maze layouts with distinct color schemes that rotate as you level up
-- 4 ghosts with distinct personalities (direct chaser, ambusher, flanker, and a shy one),
-  scatter/chase waves, frightened mode with flashing, and eyes that path-find home
-- Power pellets, 200/400/800/1600 ghost combo scoring, popup score text
-- Moving bonus fruit (7 kinds by level) that wanders in through the tunnels
-- Side tunnels with wraparound and ghost slow-down, ghost house with timed releases
-- Increasing difficulty per level (speeds up, frightened time shrinks)
-- Lives, extra life at 10,000 points, persistent local high score
-- Authentic 224×288 internal resolution with pixel-perfect upscaling
+- Four original maze layouts with rotating color schemes
+- Four ghosts with different chase behaviors
+- Power pellets and 200/400/800/1600 ghost-combo scoring
+- Seven moving bonus fruits
+- Side tunnels, ghost-house releases, and increasing difficulty
+- Persistent local high score
+- Synthesized Web Audio effects
+- Touch, keyboard, and PWA support
 
 ## Controls
 
 | Input | Action |
-|---|---|
-| Swipe / drag (touch) | steer |
-| Arrow keys / WASD | steer (desktop) |
-| Space / Enter | start · pause |
-| Tap | start · resume |
+| --- | --- |
+| Swipe or drag | Steer on touch devices |
+| Arrow keys or WASD | Steer on desktop |
+| Space or Enter | Start or pause |
+| Tap | Start or resume |
 
-## Development
+## Run locally
 
-Pure vanilla JS + canvas, zero dependencies, no build step:
+There are no application dependencies and no build step.
 
+```sh
+python3 -m http.server 8000
 ```
-python3 -m http.server 8000   # then open http://localhost:8000
-```
 
-Files: `index.html` (shell), `game.js` (engine), `sw.js` (offline cache),
-`manifest.webmanifest` + `icons/` (home-screen app), `vercel.json` (static deploy).
+Open `http://localhost:8000`.
+
+## Project structure
+
+- `index.html`: application shell
+- `game.js`: game engine
+- `sw.js`: offline cache
+- `manifest.webmanifest` and `icons/`: installable PWA
+- `vercel.json`: static deployment configuration
 
 ## Documentation
 
-| File | What's inside |
-|---|---|
-| [docs/GAMEPLAY.md](docs/GAMEPLAY.md) | scoring, ghost personalities, fruit, level tables |
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | maze format, movement, AI, audio, rendering |
-| [ROADMAP.md](ROADMAP.md) | possible future features |
-| [CHANGELOG.md](CHANGELOG.md) | version history |
-| [CONTRIBUTING.md](CONTRIBUTING.md) | local dev, ground rules, test checklist |
+| File | Purpose |
+| --- | --- |
+| [PROJECT_STATUS.md](PROJECT_STATUS.md) | Canonical project and repository relationship |
+| [docs/GAMEPLAY.md](docs/GAMEPLAY.md) | Scoring, ghosts, fruit, and level behavior |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Maze format, movement, AI, audio, and rendering |
+| [ROADMAP.md](ROADMAP.md) | Historical prototype roadmap |
+| [CHANGELOG.md](CHANGELOG.md) | Prototype history |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Local development and test checklist |
 
-*All artwork, layouts, and audio are original creations.*
+All artwork, layouts, and audio in this prototype are original creations.
